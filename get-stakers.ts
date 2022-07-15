@@ -21,17 +21,24 @@ const RPC_URL = "https://ssc-dao.genesysgo.net/";
   );
 
   let list = [];
+  let totalStaked = 0;
+
   for (let i = 0; i < accounts.length; i++) {
     const data = new Uint8Array(accounts[i].account.data as ArrayBuffer);
 
     const user = binary_to_base58(data.slice(8, 40));
+
     const stakedAddress = accounts[i].pubkey.toBase58();
 
     list.push({
       user,
-      stakedAddress,
+      amount: data[48],
     });
+
+    totalStaked += data[48];
   }
 
   writeFileSync("./stakedHolders.json", JSON.stringify(list, null, 4));
+
+  console.log("total staked", totalStaked);
 })();
